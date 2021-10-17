@@ -17,7 +17,9 @@ export const cartSlice = createSlice({
         },
 
         REDUX_ADD_MULTIPLE_TO_CART: (state, action) => {
-            state.cart.push(action.payload)
+            for(let i of action.payload) {
+                state.cart.push(i)
+            };
         },
 
         REDUX_UPDATE_CART_QUANTITY: (state, action) => {
@@ -33,7 +35,7 @@ export const cartSlice = createSlice({
 
         REDUX_REMOVE_FROM_CART: (state, action) => {
             let newState = state.cart.filter((product) => {
-                return product._id !== action._id;
+                return product._id !== action.payload;
             });
 
             state.cartOpen = newState.length > 0

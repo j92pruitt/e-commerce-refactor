@@ -3,29 +3,21 @@ import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 
 import Cart from '../components/Cart';
-import { useStoreContext } from '../utils/GlobalState';
-import {
-  REMOVE_FROM_CART,
-  UPDATE_CART_QUANTITY,
-  ADD_TO_CART,
-} from '../utils/actions';
 import { QUERY_PRODUCTS } from '../utils/queries';
 import { idbPromise } from '../utils/helpers';
 import spinner from '../assets/spinner.gif';
 import { useDispatch, useSelector } from 'react-redux';
 import { REDUX_UPDATE_PRODUCTS, selectProducts } from '../utils/redux/productSlice';
+import { REDUX_ADD_TO_CART, REDUX_REMOVE_FROM_CART, REDUX_UPDATE_CART_QUANTITY, selectCart } from '../utils/redux/cartSlice';
 
 function Detail() {
-  const [state, dispatch] = useStoreContext();
   const { id } = useParams();
 
   const [currentProduct, setCurrentProduct] = useState({});
 
   const { loading, data } = useQuery(QUERY_PRODUCTS);
 
-  // Removed products
-  const { cart } = state;
-
+  const cart = useSelector(selectCart);
   const products = useSelector(selectProducts);
   const reduxDispatch = useDispatch();
 
@@ -57,29 +49,29 @@ function Detail() {
   const addToCart = () => {
     const itemInCart = cart.find((cartItem) => cartItem._id === id);
     if (itemInCart) {
-      dispatch({
-        type: UPDATE_CART_QUANTITY,
-        _id: id,
-        purchaseQuantity: parseInt(itemInCart.purchaseQuantity) + 1,
-      });
+
+      reduxDispatch( 
+        REDUX_UPDATE_CART_QUANTITY({
+          _id: id, 
+          purchaseQuantity: parseInt(itemInCart.purchaseQuantity) + 1
+        })
+      );
+
       idbPromise('cart', 'put', {
         ...itemInCart,
         purchaseQuantity: parseInt(itemInCart.purchaseQuantity) + 1,
       });
     } else {
-      dispatch({
-        type: ADD_TO_CART,
-        product: { ...currentProduct, purchaseQuantity: 1 },
-      });
+
+      reduxDispatch( REDUX_ADD_TO_CART({ ...currentProduct, purchaseQuantity: 1 }) );
+
       idbPromise('cart', 'put', { ...currentProduct, purchaseQuantity: 1 });
     }
   };
 
   const removeFromCart = () => {
-    dispatch({
-      type: REMOVE_FROM_CART,
-      _id: currentProduct._id,
-    });
+
+    reduxDispatch( REDUX_REMOVE_FROM_CART(currentProduct._id) );
 
     idbPromise('cart', 'delete', { ...currentProduct });
   };
