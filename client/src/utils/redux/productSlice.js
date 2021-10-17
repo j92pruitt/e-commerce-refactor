@@ -11,13 +11,13 @@ export const productSlice = createSlice({
 
     reducers: {
 
-        UPDATE_PRODUCTS: (state, action) => {
+        REDUX_UPDATE_PRODUCTS: (state, action) => {
             state.products = action.payload
         }
     }
 })
 
-export const { UPDATE_PRODUCTS } = productSlice.actions;
+export const { REDUX_UPDATE_PRODUCTS } = productSlice.actions;
 
 export const selectProducts = (state) => state.product.products
 
