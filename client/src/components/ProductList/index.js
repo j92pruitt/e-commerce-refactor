@@ -11,7 +11,7 @@ import { REDUX_UPDATE_PRODUCTS, selectProducts } from '../../utils/redux/product
 
 
 function ProductList() {
-  const [state, dispatch] = useStoreContext();
+  const [state,] = useStoreContext();
 
   const { currentCategory } = state;
 
@@ -38,7 +38,7 @@ function ProductList() {
       });
 
     }
-  }, [data, loading, dispatch, reduxDispatch]);
+  }, [data, loading, reduxDispatch]);
 
   function filterProducts() {
     if (!currentCategory) {
